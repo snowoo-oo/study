@@ -80,5 +80,79 @@
                     return this.name;
                 }
             }
+    //helloController -> return hello -> HttpMessageConverter(JsonConverter, StringConverter) -> (to client) {name : spring} 전달
+```
+</details>
+
+<details>
+    <summary>백엔드 개발</summary>
+
+```java
+//controller : web mvc에서 controller 역할
+//service : 핵심 비즈니스 로직 구현
+//repository : db에 접근, 도메인 객체를 db에 저장 관리
+//domain : 비즈니스 도메인 객체 (회원, 주문, 쿠폰...)주로 DB에 저장하고 관리됨
+
+//package domain Member.class 생성
+//package repository MemberRepository 인터페이스 생성
+//  findById / findByName은 Optional<Member> 반환
+//  Optional 은 Null 예외 처리 용이함
+    @Override
+    public Optional<Member> findById(Long id){
+        return Optional.ofNullable(store.get(id));
+    }
+
+    @Override
+    public Optional<Member> findByName(String name){
+        return store.values().stream()
+        .filter(member -> member.getName().equals(name))
+        .findAny();
+    }
+//package repository MemoryMemberRepository 생성
+//package service MemberService.class 생성
+//    - dependency injection (생성자 주입)
+    public Long join(Member member){
+        validateDuplicateMember(member);
+        memberRepository.save(member);
+        return member.getId();
+    }    
+
+    private void validateDuplicateMember(Member member){
+        memberRepository.findByName(member.getName())
+                .ifPresent(m ->{
+                    throw new IllegalStateException("이미 존재하는 회원입니다.");
+                });
+    }
+```
+
+</details>
+
+<details>
+    <summary>스프링 빈 등록 방법</summary>
+
+    스프링 컨테이너
+
+    ```mermaid
+        graph LR;
+        A[memberControll] --> B[memberService] -- C[memberRepository];
+    ```
+
+```java
+//1. 컴포넌트 스캔과 자동 의존관계 설정
+//클래스 -> @Service, @Repository, @Controller, 생성자 -> @AutoWired
+
+//2. 자바코드로 직접 스프링 빈 등록하기
+@Configuration
+public class SpringConfig{
+    @Bean
+    public MemberService memberSerice(){
+        return new MemberService(memberRepository());
+    }
+
+    @Bean
+    public MemberRepository memberRepository(){
+        return new MemoryMemberRepository();
+    }
+}
 ```
 </details>
