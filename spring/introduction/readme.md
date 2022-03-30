@@ -1,7 +1,7 @@
 <details>
   <summary>스프링 웹개발의 3가지 방법</summary>
 
-  ```java
+```java
   //0. thymeleaf 사용방법
   //#ooo.html
   //    <html xmlns:th="http://www.thymeleaf.org">
@@ -80,6 +80,5 @@
                     return this.name;
                 }
             }
-    ```
-
+```
 </details>
