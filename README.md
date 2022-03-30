@@ -6,3 +6,5 @@ study about...
   2. about java script [<img src="https://user-images.githubusercontent.com/77713591/159514548-4bbc3d08-f755-4334-89ff-e2ff58bc6254.svg"  width="25" height="25"/>](https://learnjs.vlpt.us/)
 
   3. Spring 입문 [<img src="https://user-images.githubusercontent.com/77713591/160607789-ad10d8e6-3382-435c-a079-fa64a4c82725.svg"  width="25" height="25"/>](https://learnjs.vlpt.us/)
+
+  4. asp.net core 6.0 [<img src="https://user-images.githubusercontent.com/77713591/160731657-09728aca-fbd9-4bcb-ac22-52d3fada2e88.svg" width="25" height="25"/>](https://www.youtube.com/watch?v=8JFUiL5PPCE&list=PLO56HZSjrPTBblm3CbalLSf7Zv7IrwU7G)
