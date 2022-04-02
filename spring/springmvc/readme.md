@@ -1,3 +1,4 @@
+**Servlet**
 <details>
 <summary>1. 스프링 부트 서블릿 환경 구성</summary>
 
@@ -147,7 +148,8 @@
 </details>
 
 ---
-스프링 MVC 기본기능
+
+**스프링 MVC 기본기능**
 <details>
     <summary>1. 로깅 기능</summary>
     slf4j / logback 사용
@@ -580,4 +582,248 @@ ResponseEntity<>를 이용한 JSON 반환
     @RestController
     @Controller 대신에 @RestController를 사용하면, 해당 컨트롤러가 모두 @ResponseBody가 적용되는 효과가 있다
     따라서 REST API (HTTP API)를 만들 떄 사용하는 컨트롤러 이다.
+</details>
+
+---
+**Item Service web serivce 만들기**
+<details>
+    <summary>1. 프로젝트 생성</summary>
+
+    Gradle Project / Java / Spring Boot recent version / 
+    Group : hello / Artifact : item-service / Pacakge name : hello.itemservice /
+    Packaging : Jar / Java 11
+
+    Dependencies : Spring Web, Thymeleaf, Lombok
+
+</details>
+
+<details>
+    <summary>2. 요구사항 분석</summary>
+
+    - 상품 리스트 / 상품 상세 / 상품 추가 / 상품 수정
+
+</details>
+
+<details>
+    <summary>3. 상품 도메인 개발</summary>
+
+```java
+Item - 상품 객체
+
+@Getter @Setter
+public class Item{
+    private Long id;
+    private String itemName;
+    private Integer price;
+    private Integer quantity;
+}
+
++ 생성자 
+```
+
+```java
+ItemRepository
+
+@Repository
+public class ItemRepository{
+    private static final Map<Long, Item> store = new HashMap<>();
+    private static long sequence = 0L;
+
+    public Item save(Item item){
+        item.setId(++sequence);
+        store.put(item.getId(), item);
+        return item;
+    }
+
+    public List<Item> findAll(){
+        return new ArrayList<>(store.values());
+    }
+
+    public Item findById(Long id){
+        return store.get(id);
+    }
+
+    public void update(Long itemId, Item updateParam){
+        Item item = findById(itemId);
+        item.setItemName(updateParam.getItemName());
+        item.setPrice(updateParam.getPrice());
+        item.setQuantity(updateParam.getQuantity());
+    }
+
+    public void clearStore(){
+        store.clear();
+    }
+}
+
+repository 생성 후 test / junit5 해볼것. 코드 참조
+```
+
+</details>
+
+<details>
+    <summary>4. 컨트롤러 / 뷰 템플릿</summary>
+
+```java
+BasicItemController
+
+    @Controller
+    @RequestMapping("/basic/items")
+    @RequiredArgsConstructor    //final 붙은 멤버변수만 사용해서 생성자를 자동으로 만들어준다.
+    public class BasicItemController{
+
+        private final ItemRepository itemRepository;
+
+        /**
+        * 회원 리스트 전체를 보여주는 메소드
+        * model 에 회원전체를 담아서 담고 뷰가 참조하도록 한다.
+        * /template/basic/items.html이 thymeleaf에 의해서 참조 된다.
+        */
+        @GetMapping
+        public String items(Model model){
+            List<Item> items = itemRepository.findAll();
+            model.addAttribute("items", items);
+            return "basic/items";
+        }
+
+        /**
+        * 해당 빈의 의존관계가 모두 주입되고 나면 초기화 용도로 호출된다.
+        */
+        @PostConstruct
+        public void init(){
+            itemRepository.save(new Item("itemA", 10000, 100));
+            itemRepository.save(new Item("itemB", 20000, 200));
+        }
+
+        /**
+        * 해당 아이템의 상세화면을 조회한다. item을 model에 담아서 view에서 참조하도록 설계
+        */
+        @GetMapping("{itemId}")
+        public String item(@PathVariable Long itemId, Model model){
+            Item item = itemRepository.findById(itemId);
+            model.addAttribute("item", item);
+            return "basic/item";
+        }
+
+        /**
+        * 상품 등록폼 / 아무데이터없는 폼 호출
+        */
+        @GetMapping("/add")
+        public String addForm(){
+            return "basic/addForm";
+        }
+
+        /**
+        * 상품 수정 폼 전달
+        */
+        @GetMapping("/{itemId}/edit")
+        public String editForm(@pathVariable Long itemId, Model model){
+            Item item = itemRepository.findById(itemId);
+            model.addAttribute("item", item);
+            return "basic/editForm";
+        }
+
+        /**
+        * 상품 수정하기
+        */
+        @PostMapping("/{itemId}/edit")
+        public String edit(@PathVariable Long itemId, @ModelAttribute Item item){
+            itemRepository.update(itemId, item);
+            return "redirect:/basic/items/{itemId}";
+        }
+    }
+
+```
+
+```
+thymeleaf
+    - 행심은 th:xxx가 붙은 부분은 서버사이드에서 렌더링 되고, 기존 것을 대체한다.
+        th:xxx이 없으면 기존 html의 xxx속석이 그대로 사용된다.
+
+    - 순서 HTML을 그대로 유지하면서 뷰 템플릿도 사용할 수 있는 타임리프의 특징을 네츄럴 템플릿이라 한다.
+```
+
+```
+    <html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        ...
+        <link th:href="@{/css/bootstrap.min.css}">
+    </head>
+    <body>
+
+    //상품 등록 버튼
+    <button th:onclick="|location.href='@{/basic/items/add}'|">상품 등록</button>
+
+    //상품 목록 반복
+    <tr th:each="item : ${items}>
+        <td><a th:href="@{|/basic/items/${item.id}|}" th:text=${item.id}>상품 ID</a></td>
+        <td><a th:href="@{|/basic/items/${item.id}|}" th:text=${item.itemName}>상품명</a></td>
+    </tr>
+    </body>
+    </html>
+```
+</details>
+
+<details>
+    <summary>5. 상품 추가</summary>
+
+```java
+@RequestParam으로 받아서 Model에 전달
+
+    @PostMapping("/add")
+    public String addItemV1(@RequestParam String itemName,
+                            @RequestParam int price,
+                            @RequestParam Integer quantity,
+                            Model model){
+
+        Item item = new Item(itemName, price, quantity);
+        itemRepository.save(item);
+        model.addAttribute("item", item);
+        return "basic/item";
+    }
+```
+
+```java
+@ModelAttribute로 받기
+
+    @PostMapping("/add")
+    public String addItemV2(@ModelAttribute("item") Item item){
+
+        itemRepository.save(item);
+        return "basic/item";
+    }
+```
+
+```java
+이름 속성 생략
+
+    @PostMapping("/add")
+    public String addItemV3(@ModelAttribute Item item){
+
+        itemRepository.save(item);
+        return "basic/item";
+    }
+```
+
+```java
+@ModelAttrubute 생략
+
+    @PostMapping("/add")
+    public String addItemV4(Item item){
+
+        itemRepository.save(item);
+        return "basic/item";
+    }
+```
+      
+```java
+##RedirectAttributes 적용
+
+    @PostMapping("/add")
+    public String addItemV5(Item item, RedirectAttributes redirectAttributes){
+        Item savedItem = itemRepository.save(item);
+        redirectAttributes.addAttribute("itemId", savedItem.getId());
+        redirectAttributes.addAttribute("status", true);
+        return "redirect:/basic/items/{itemId}";
+    }
+```
 </details>
