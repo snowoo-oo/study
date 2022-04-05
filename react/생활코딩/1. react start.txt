@@ -1,0 +1,60 @@
+1. 개발환경 세팅
+2. 어디에 코드를 바꿔야 하는가?
+3. 그렇게 작성한것을 결과를 보는것
+4. deploy(배포)하는것
+
+CODING -> RUN -> DEPOLY
+
+######1. 개발환경 세팅 #####
+#설치 version
+nodejs 16.13.0 LTS
+
+#확인
+npm -v
+
+#create-react-app 설치
+npm install -g create-react-app
+
+@vs code
+//npm react 실행
+npm run start
+
+#######################
+
+######2. 어디에 코드를 바꿔야 하는가? #####
+#디렉터리 구조 src / public
+#1. public -> index.html 이 있는곳
+#index.html 안에 <div id="root">....</div> 태그가 react가 실행되는곳
+#-> 브라우저에서 태그를 보면 id가 root인 태그 안에 react 코드가 있다.
+#이 태그 안쪽의 컨포넌트는 src안에 파일을 수정해서 만든다.
+#여기서 src/index.js 파일을 보면 document.getElementById("root")
+#이것을 기반으로하여 index.html 의 root가 위의 root가 된다.
+#이때 ReactDOM.react(
+	<React.StrictMode>
+		<App />    //이 부분이 리액트를 통해만든 사용자 정의 태그 (컴포넌트) 이다.
+	</React.StrictMode>
+	
+#이 컴포넌트의 실제 구현은
+#import App from './App'; (파일) 이 부분 이다.
+#이것은 App.js 파일을 의미, App.js를 켜보면
+#funtion App(){
+	return(
+	<div className="App> //반드시 하나의 태그는 들어가 있어야 한다.
+		//여기 부분 수정하면 홈페이지가 수정된다.
+	</div>
+	);
+}
+
+#create-react-app 에서 css를 어떻게 하면 되는가?
+#index.js 파일에 보면 import './index.css'; 가 있다.
+#이 파일을 수정한다.
+##################################
+
+######4. DEPOLY #####
+npm run build
+#build라는 폴더 생성
+#실제 배포 할때는 build폴더 안의 파일을 이용하면 된다.
+
+#npm install -g serve //-g -> global pc 어디에서나 serve라는 명령어를 쓰도록하겠다.
+#serve : npm에서 제공하는 web server
+npx serve -s build // npx(한번만 npm하기) "한번만 사용할 수 있는 웹서버를 실행 시킬때 build라는 폴더를 root 로 하겠다.
