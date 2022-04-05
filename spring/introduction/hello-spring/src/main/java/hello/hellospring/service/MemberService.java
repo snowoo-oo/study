@@ -42,6 +42,7 @@ public class MemberService {
      * @return
      */
     public List<Member> findMembers(){
+
         return memberRepository.findAll();
     }
 
@@ -51,6 +52,7 @@ public class MemberService {
      * @return
      */
     public Optional<Member> findOne(Long memberId){
+
         return memberRepository.findById(memberId);
     }
 
