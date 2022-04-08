@@ -128,6 +128,22 @@ studentStream.sorted(Comparator.comparing(Student::getBan) //반별로 정렬
 Stream<R> map(Function<T,R> mapper)
 IntStream mapToInt(ToIntFunction<T> mapper)
 IntStream flatMapToInt(Function<T, IntStream> m)
+
+Stream<T> peek(Consumer<? super T> action) //중간 연산 (스트림 소비 X) 엿보기 기능
+
+Stream<File> fileStream = Stream.of(fileArr);
+
+Stream<String> filenameStream = fileStream.map(File.getName);
+                                        .filter(s-> s.indexOf('.') != -1)
+                                        .peek(s -> System.out.printf("filename = %s%n", s))
+                                        .map(s -> s.substring(s.indexOf('.') + 1))
+                                        .peek(s -> System.out.printf("extension=%s%n", s))
+                                        .map(String::toUpperCase)
+                                        .distinct()
+                                        .forEach(System.out::println);
+
+flatMap() //스트림의 스트림을 스트림으로 변환
+Stream<String[]> -> Stream<String>
 ```
 
 ```java
@@ -157,3 +173,23 @@ R collect(Collector<T,A,R> collector) //스트림의 요소를 수집한다.
 ```
 ---
 
+```java
+//T Type Object 래퍼 클래스 Optional<T>
+//모든 종류의 객체 저장
+//1. null을 직접 다루는것은 위험 (NullPointerException 발생가능) -> null을 객체에 담아서 다루기 위해서
+//2. null 체크를 안해도된다.
+
+생성
+String str = "abc"
+Optional<String> optval = Optional.of(str);
+Optional<String> optval = Optional.of("abc")
+Optional<String> optval = Optional.of(null); // NullPointerException 발생!!
+Optional<String> optval = Optional.ofNullable(null);
+
+값 가져오기
+String str1 = optval.get(); //optval 저장된 값 반환. null일때 예외 발생
+String str2 = optval.orElse("") // optval 저장된 값 반환. null일때는 ""반환
+String str3 = optval.orElseGet(String::new) // ()-> new String()
+String str4 = optval.orElseThrow(NullPointerException::new);// null이면 예외발생
+
+```
