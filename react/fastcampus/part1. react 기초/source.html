@@ -12,16 +12,26 @@
     </div>
     <script type="text/babel">
         const rootElement = document.getElementById("root");
-        const Paint = ({title, discription}) =>(
-            <>
-            <h1>{title}</h1>
-            <h3>{discription}</h3>
-            </>
-        );
+
+        const Text = ({text}) => {
+            if(text.charAt(0) === text.charAt(0).toUpperCase()){
+                return <h1>{text}</h1>
+            }
+            else{
+                return <h3>{text}</h3>
+            }
+        };
+
+        function Number({number}){
+            return number % 2 ===0 ?<h1>{number}</h1> : <h3>{number}</h3>;
+        }
 
         const element = (
             <>
-            <Paint title="aa" discription="bb"/>
+            <Text text="Text1" />
+            <Text text="text1" />
+            <Number number = {1}/>
+            <Number number = {2}/>
             </>
         )
         ReactDOM.render(element, rootElement);
