@@ -29,7 +29,7 @@ public class FormatterController {
 
     @Data
     static class Form{
-        
+
         @NumberFormat(pattern = "###,###")
         private Integer number;
 
