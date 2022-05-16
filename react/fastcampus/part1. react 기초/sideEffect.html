@@ -18,13 +18,21 @@
       );
 
       const App = () => {
-        //const [keyword, setKeyword] = React.useState("");
-        const [result, setResult] = React.useState("");
-        const [typing, setTyping] = React.useState(false);
+        const [keyword, setKeyword] = React.useState(
+          () => {
+            console.log("initialize");
+            return window.localStorage.getItem("keyword");
+          });
+          const [result, setResult] = React.useState("");
+          const [typing, setTyping] = React.useState(false);
+          
+          console.log("render");
 
-        const keywordState = React.useState("");
-        const keyword = keywordState[0];
-        const setKeyword = keywordState[1];
+        React.useEffect(()=> {
+          console.log("effect");
+          window.localStorage.setItem("keyword", keyword);
+        }, []);
+
         function handleChange(event){
           setKeyword(event.target.value);
           setTyping(true);
@@ -37,7 +45,7 @@
 
         return (
           <>
-          <input onChange={handleChange}/>
+          <input onChange={handleChange} value={keyword}/>
           <button onClick={handleClick}>search</button>
           <p>{typing? `Looking for ${keyword}...` : result}</p>
           </>

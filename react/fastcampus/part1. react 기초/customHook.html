@@ -17,14 +17,23 @@
         onMouseOut={() => alert("bye")}>Press</button>
       );
 
-      const App = () => {
-        //const [keyword, setKeyword] = React.useState("");
-        const [result, setResult] = React.useState("");
-        const [typing, setTyping] = React.useState(false);
+      function useLocalStorage(itemName, value = ""){
+        const [state, setState] = React.setState(()=>{
+          return window.localStorage.getItem(itemName) || value;
+        });
 
-        const keywordState = React.useState("");
-        const keyword = keywordState[0];
-        const setKeyword = keywordState[1];
+        React.useEffect(()=>{
+          window.localStorage.setItem(itemName, state);
+        }, [state]);
+
+        return [state, setState];
+      }
+
+      const App = () => {
+        const [keyword, setKeyword] = useLocalStorage("keyword");
+        const [result, setResult] = useLocalStorage("result");
+        const [typing, setTyping] = useLocalStorage("typing",false);
+        
         function handleChange(event){
           setKeyword(event.target.value);
           setTyping(true);
@@ -37,7 +46,7 @@
 
         return (
           <>
-          <input onChange={handleChange}/>
+          <input onChange={handleChange} value={keyword}/>
           <button onClick={handleClick}>search</button>
           <p>{typing? `Looking for ${keyword}...` : result}</p>
           </>
