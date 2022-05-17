@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<body>
+    <div id="root"></div>
+    <script crossorigin="crossorigin" src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script crossorigin="crossorigin" src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+    <script crossorigin="crossorigin" src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+    <!--css 적용하기
+        <style>
+            .button {
+                background-color: #4CAF50;
+                /* Green */
+                border: none;
+                color: white;
+                padding: 15px 32px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                margin: 4px 2px;
+                cursor: pointer;
+            }
+            .blue {
+                background-color: #008CBA;
+            }
+            .red {
+                background-color: #f44336;
+            }
+            .gray {
+                background-color: #e7e7e7;
+                color: black;
+            }
+            .black {
+                background-color: #555555;
+            }
+        </style>
+        <script type="text/babel">
+        function Button({className="", color, ...rest}){
+            //console.log(JSON.stringify(props));
+            return <button className={`button ${className} ${color}`} {...rest}/>;
+        }
+
+            const rootElement = document.getElementById("root");
+            const element = (
+                <>
+                    < Button style={{borderRadius: "50%"}}> Green</Button>
+                    < Button color="blue" style={{borderRadius: "8%"}}> Blue</Button>
+                    < Button color="red" > Red</Button>
+                    < Button color="gray" > Gray</Button>
+                    < Button color="black" > Black</Button>
+                </>
+            );
+            ReactDOM.render(element, rootElement);
+        </script>
+        -->
+
+        <!--useRef
+    <script type="text/babel">
+        const rootElement = document.getElementById("root");
+        const App = () =>{
+            const inputRef = React.useRef();
+            const divRef = React.useRef();
+            React.useEffect(()=>{
+                inputRef.current.focus();
+                ///document.getElementById("input").focus();
+
+                setTimeout(()=>{
+                    divRef.current.style.backgroundColor="pink";
+                }, 1000);
+            }, []);
+            return (
+                <>
+                    <input ref={inputRef}/>
+                    <div 
+                    ref = {divRef}
+                    style={{height:100, width: 100, backgroundColor: "brown"}}/>
+                </>
+            );
+        };
+
+        ReactDOM.render(<App/>, rootElement);
+    </script>
+    -->
+
+    <!--form control1
+    <script type="text/babel">
+        const rootElement = document.getElementById("root");
+        const handleSubmit = (event) =>{
+            event.preventDefault();
+            console.dir(event.target.elements);
+            alert(`first name : ${event.target.elements.fname.value}, last name : ${event.target.elements.lname.value}`);
+        };
+        const App = () => {
+            return (
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="fname">First name:</label>
+          <br />
+          <input type="text" id="fname" name="fname" defaultValue="John" />
+          <br />
+          <label htmlFor="lname">Last name:</label>
+          <br />
+          <input type="text" id="lname" name="lname" defaultValue="Doe" />
+          <br />
+          <br />
+          <input type="submit" defaultValue="Submit" />
+        </form > 
+            );
+        };
+
+        ReactDOM.render(<App/>, rootElement);
+    </script>
+    -->
+    <!--form control2
+    <script type="text/babel">
+        const rootElement = document.getElementById("root");
+
+        const App = () => {
+            const [message, setMessage] = React.useState("");
+            const [phoneNumber, setPhoneNumber] = React.useState("");
+
+            const handleSubmit = (event) => {
+                event.preventDefault();
+                alert(phoneNumber);
+            }
+
+            const handleChange = (event) => {
+                
+                if (event.target.value.startsWith(0)) {
+                    setMessage("phone number is valid")
+                    setPhoneNumber(event.target.value);
+                }else if(event.target.value.length===0){
+                    setPhoneNumber("");
+                    setMessage("");
+                }else {
+                    setMessage("phone number should start with zero");
+                }
+
+            }
+
+            return (
+                <form onSubmit={handleSubmit}>
+                    <label htmlFor="phone">phone number:
+                    </label>
+                    <br />
+                    <input id="phone" name="phone" onChange={handleChange} value={phoneNumber}/>
+                    <p>{message}</p>
+                    <br />
+                    <br />
+                    <button
+                        type="submit"
+                        disabled={phoneNumber.length === 0 || message !== "phone number is valid"}>submit</button>
+                </form>
+            );
+        }
+        ReactDOM.render(<App />, rootElement);
+    </script>
+    -->
+    <!--error controll 
+    <script type="text/babel">
+        const rootElement = document.getElementById("root");
+
+        class ErrorBoundary extends React.Component {
+            state = { error: null };
+            static getDerivedStateFromError(error) {
+                return { error };
+            }
+
+            render() {
+                const { error } = this.state;
+                if (error) {
+                    return <this.props.fallback error={error}/>;
+                }
+                return this.props.children;
+            }
+        }
+
+        const Child = () => {
+            throw new Error('Something Wrong...');
+            return <p>Child...</p>;
+        };
+
+        const Fallback = () =>{
+            return <p> There is some error !! !!</p>
+        }
+        const App = () => {
+            return (
+                <>
+                    <p>App</p>
+                    <ErrorBoundary fallback={Fallback}>
+                        <Child />
+                    </ErrorBoundary>
+                </>
+            );
+        };
+        ReactDOM.render(<App />, rootElement);
+    </script>
+    -->
+</body>
+
+</html>
