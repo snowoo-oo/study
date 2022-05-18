@@ -1,0 +1,101 @@
+<html>
+
+<body>
+    <div id="root"></div>
+    <script crossorigin="crossorigin" src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script crossorigin="crossorigin" src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+    <script crossorigin="crossorigin" src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+
+    <script type="text/babel">
+        const rootElement = document.getElementById("root");
+
+        const todos = [
+            [
+                {
+                    id: 1,
+                    value: "First"
+                }, {
+                    id: 2,
+                    value: "Second"
+                }, {
+                    id: 3,
+                    value: "Third"
+                }, {
+                    id: 4,
+                    value: "Fourth"
+                }
+            ],
+            [
+                {
+                    id: 2,
+                    value: "Second"
+                }, {
+                    id: 3,
+                    value: "Third"
+                }, {
+                    id: 4,
+                    value: "Fourth"
+                }, {
+                    id: 1,
+                    value: "First"
+                }
+            ],
+            [
+                {
+                    id: 1,
+                    value: "First"
+                }, {
+                    id: 2,
+                    value: "Second"
+                }, {
+                    id: 4,
+                    value: "Fourth"
+                }, {
+                    id: 3,
+                    value: "Third"
+                }
+            ]
+        ];
+
+        const App = () => {
+            const [items, setItems] = React.useState(todos[0]);
+
+            React.useEffect(() => {
+                const interval = setInterval(() => {
+                    const random = Math.floor(Math.random() * 3);
+                    setItems(todos[random]);
+                }, 1000);
+
+                return () => {
+                    clearInterval(interval);
+                }
+            }, 1000);
+
+            const handleDoneClick = (todo) => {
+                setItems(items => items.filter((item) => item !== todo));
+            };
+
+            const handleRestoreClick = () => {
+                setItems((items) => [
+                    ...items,
+                    todos.find((item) => !items.includes(item))
+                ])
+            };
+
+            return <> {
+
+                items.map((todo, index) => (
+                    <div key={index}>
+                        <button onClick={() => handleDoneClick(todo)}>{todo.value}</button>
+                    </div>
+                ))
+            }
+                < button onClick={handleRestoreClick} > Restore</button> </>;
+        };
+        ReactDOM.render(<App />,
+            rootElement
+        );
+    </script>
+</body>
+
+</html>
